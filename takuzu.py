@@ -138,5 +138,6 @@ if __name__ == "__main__":
         print(i)
 
     print(board.adjacent_horizontal_numbers(3,2))
+    hello
     """
     pass
