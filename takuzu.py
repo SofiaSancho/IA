@@ -42,6 +42,7 @@ class Board:
     #Antonio criei (temporaria) __str__ e ajustei o get_number para colunas de 0 a n-1
 
     def __init__(self, n, board):
+        """O construtor especifica o estado inicial."""
         self.n = n
         self.board = board
         
@@ -85,7 +86,6 @@ class Board:
         """
         #Leitura do input. n -> tamanho do tabuleiro. board_lst -> lista com os valores de cada posição do tabuleiro
         #retorna uma instância do Board com os atributos que leu do input
-
         
         n = int((sys.stdin.readline()).rstrip('\n'))
 
@@ -102,6 +102,7 @@ class Board:
 class Takuzu(Problem):
     
     # adicionei __init__, result e actions
+    # Sofia: fiz o goal_test
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         self.initial = TakuzuState(board)
@@ -131,8 +132,27 @@ class Takuzu(Problem):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
-        # TODO
-        pass
+
+        board = state.board
+
+        line = []
+        n = state.board.n
+        #muda aqui o nheco, tava sem ideias
+        for nheco in ("linha", "coluna"):
+            for i in range(n):
+                for j in range(n):
+                    pos = state.board.get_number(i, j) if nheco == "linha" else state.board.get_number(j,i)
+                    line.append(pos)
+                    if (pos == 2):
+                        return False
+                if (n % 2 == 0 and line.count(1) != line.count(0)):
+                    return False
+                if (n % 2 == 1 and (line.count(1) != line.count(0) + 1 or line.count(1) != line.count(0) - 1)):
+                    return False
+                line = []
+
+        return True
+
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
@@ -153,5 +173,16 @@ if __name__ == "__main__":
     board = Board.parse_instance_from_stdin()
     puzzle = Takuzu(board)
     initial = TakuzuState(board)
-    newState = puzzle.result(initial, (2, 2, 6))
-    pass
+    """ pra testar o goal_test (no teste 1)
+    newState = puzzle.result(initial, (0,0,0))
+    newState = puzzle.result(initial, (0,1,1))
+    newState = puzzle.result(initial, (1,2,0))
+    newState = puzzle.result(initial, (2,1,1))
+    newState = puzzle.result(initial, (3,1,0))
+    newState = puzzle.result(initial, (3,2,1))
+    newState = puzzle.result(initial, (3,3,0))
+
+    print(newState)
+
+    print(puzzle.goal_test(newState))
+    """
