@@ -48,9 +48,11 @@ class Board:
         
     def __str__(self):
         s = ''
-        for i in board.board:
-            s += '\n' + str(i)
-        return s
+        for i in self.board:
+            for j in i:
+                s += str(j) + '\t'
+            s = s[:len(s)] + '\n'
+        return s[:len(s)]
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -89,21 +91,18 @@ class Board:
         
         # Antonio. ignora estes comentarios. E so para eu conseguir testar no IDE
         # try:
-        n = int((sys.stdin.readline()).rstrip('\n'))
-        # except:
-        #     f = open ('testes-takuzu/input_T02', 'r')
+        # f = open ('testes-takuzu/input_T01', 'r')
+        # n = int((f.readline()).rstrip('\n'))
+        # # except:
+        # board_lst = [[] for x in range(n)]
+
+        # for i in range(n):
+        #     board_lst[i] = [int(j) for j in f.readline() if j != '\n' and j != '\t']
             
-        #     n = int((f.readline()).rstrip('\n'))
-        #     board_lst = [[] for x in range(n)]
-
-        #     for i in range(n):
-        #         board_lst[i] = [int(j) for j in f.readline() if j != '\n' and j != '\t']
+        # f.close()
+        # return Board(n, board_lst)
                 
-        #     f.close()
-        #     return Board(n, board_lst)
-        
-        
-
+        n = int((sys.stdin.readline()).rstrip('\n'))
         board_lst = [[] for x in range(n)]
 
         for i in range(n):
@@ -190,13 +189,6 @@ class Takuzu(Problem):
                     newActions += [act]
                 
         return newActions
-                                        
-                                        
-                                        
-                                    
-                                    
-                    
-        
 
     def result(self, state: TakuzuState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -204,9 +196,9 @@ class Takuzu(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
         
-        newBoard = state.board
-        newBoard.board[action[0]][action[1]] = action[2]
-        return TakuzuState(newBoard)
+        newBoard = state.board.board.copy()
+        newBoard[action[0]][action[1]] = action[2]
+        return TakuzuState(Board(len(newBoard), newBoard))
 
     def goal_test(self, state: TakuzuState):
         """Retorna True se e só se o estado passado como argumento é
