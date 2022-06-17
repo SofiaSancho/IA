@@ -27,7 +27,7 @@ class TakuzuState:
         TakuzuState.state_id += 1
         
     def __str__(self):
-        return 'ID: ' + str(self.id) + str(self.board)
+        return 'ID: ' + str(self.id) + '\n' +  str(self.board)
 
     def __lt__(self, other):
         return self.id < other.id
@@ -53,6 +53,15 @@ class Board:
                 s += str(j) + '\t'
             s = s[:len(s)] + '\n'
         return s[:len(s)]
+    
+    def copy_board(self):
+        newBoard = []
+        for v in self.board:
+            line = []
+            for col in v:
+                line += [col]
+            newBoard += [line]
+        return Board(self.n, newBoard)
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -90,10 +99,8 @@ class Board:
         #retorna uma instância do Board com os atributos que leu do input
         
         # Antonio. ignora estes comentarios. E so para eu conseguir testar no IDE
-        # try:
-        # f = open ('testes-takuzu/input_T01', 'r')
+        # f = open ('testes-takuzu/input_T03', 'r')
         # n = int((f.readline()).rstrip('\n'))
-        # # except:
         # board_lst = [[] for x in range(n)]
 
         # for i in range(n):
@@ -196,9 +203,9 @@ class Takuzu(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
         
-        newBoard = state.board.board.copy()
-        newBoard[action[0]][action[1]] = action[2]
-        return TakuzuState(Board(len(newBoard), newBoard))
+        newBoard = state.board.copy_board()
+        newBoard.board[action[0]][action[1]] = action[2]
+        return TakuzuState(newBoard)
 
     def goal_test(self, state: TakuzuState):
         """Retorna True se e só se o estado passado como argumento é
@@ -242,9 +249,10 @@ if __name__ == "__main__":
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
 
-    board = Board.parse_instance_from_stdin()
-    puzzle = Takuzu(board)
-    initial = TakuzuState(board)
+    # board = Board.parse_instance_from_stdin()
+    # puzzle = Takuzu(board)
+    # initial = TakuzuState(board)
+    # new = puzzle.result(initial, (0, 0, 1))
     """ pra testar o goal_test (no teste 1)
     newState = puzzle.result(initial, (0,0,0))
     newState = puzzle.result(initial, (0,1,1))
@@ -259,5 +267,16 @@ if __name__ == "__main__":
     print(puzzle.goal_test(newState))
     """
     
-    newState = puzzle.result(initial, (0, 1, 0))
-    puzzle.actions(newState)
+    # newState = puzzle.result(initial, (0, 1, 0))
+    # puzzle.actions(newState)
+    
+    # Ler tabuleiro do ficheiro 'i1.txt' (Figura 1):
+    # $ python3 takuzu < i1.txt
+    board = Board.parse_instance_from_stdin()
+    # Criar uma instância de Takuzu:
+    problem = Takuzu(board)
+    # Obter o nó solução usando a procura em profundidade:
+    goal_node = breadth_first_tree_search(problem)
+    print("Is goal?", problem.goal_test(goal_node.state))
+    print("Solution:\n", goal_node.state.board, sep="")
+
