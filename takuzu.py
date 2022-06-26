@@ -2,9 +2,9 @@
 # Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
 # Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
 
-# Grupo 00:
-# 00000 Nome1
-# 00000 Nome2
+# Grupo 32:
+# 95735 António Marçal
+# 99122 Sofia Sancho
 
 import sys
 from search import (
@@ -17,7 +17,6 @@ from search import (
     recursive_best_first_search,
 )
 
-# Antonio criei (temporaria) __str__
 class TakuzuState:
     state_id = 0
 
@@ -37,9 +36,6 @@ class TakuzuState:
 
 class Board:
     """Representação interna de um tabuleiro de Takuzu."""
-
-    #Sofia. criei a função __init__, fiz a get_number, adjacentes e parce_instance_from_stdin
-    #Antonio criei (temporaria) __str__ e ajustei o get_number para colunas de 0 a n-1
 
     def __init__(self, n, board):
         """O construtor especifica o estado inicial."""
@@ -69,7 +65,7 @@ class Board:
         return self.board[row][col]
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
-        """Devolve os valores imediatamente abaixo e acima,
+        """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
         anterior = None if row-1 < 0 else self.board[row-1][col]
         posterior = None if row >= self.n - 1 else self.board[row + 1][col]
@@ -88,10 +84,8 @@ class Board:
     def parse_instance_from_stdin():
         """Lê o test do standard input (stdin) que é passado como argumento
         e retorna uma instância da classe Board.
-
         Por exemplo:
             $ python3 takuzu.py < input_T01
-
             > from sys import stdin
             > stdin.readline()
         """
@@ -122,8 +116,6 @@ class Board:
 
 class Takuzu(Problem):
     
-    # adicionei __init__, result e actions
-    # Sofia: fiz o goal_test
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         self.initial = TakuzuState(board)
@@ -134,17 +126,18 @@ class Takuzu(Problem):
         
         board = state.board
         actions = []
+        #contagem de 1's e 0's por linha e coluna
         rowCounts = [[0, 0] for x in range(board.n)]
         colCounts = [[0, 0] for x in range(board.n)]
         for i in range(board.n):
             for j in range(board.n):
                 
-                if board.get_number(i, j) in (0, 1):
+                if board.get_number(i, j) in (0, 1): 
+                    #se encontrar uma posicao preenchida, +1 nessa linha e coluna
                     rowCounts[i][board.get_number(i, j)] += 1
                     colCounts[j][board.get_number(i, j)] += 1
                 else:
                     for value in (0, 1):
-                            
                         if value not in board.adjacent_horizontal_numbers(i, j)\
                             and value not in board.adjacent_vertical_numbers(i, j):
                             actions += [(i, j , value)]
@@ -152,7 +145,6 @@ class Takuzu(Problem):
                             # horizontais
                             isgood = 'Yes'
                             if board.adjacent_horizontal_numbers(i, j)[0] == value:
-                                
                                 isgood = 'Maybe'
                                 
                                 if board.adjacent_horizontal_numbers(i, j - 1)[0] == value:
@@ -185,25 +177,29 @@ class Takuzu(Problem):
                             
                             if isgood != 'No':
                                 actions += [(i, j , value)]
-                                
+
+        max = board.n//2 + board.n%2      
         newActions = []
         for act in actions:
-            if (rowCounts[act[0]][0] < board.n/2 and act[2] == 0) or\
-                (rowCounts[act[0]][1] < board.n/2 and act[2] == 1):
+            if (rowCounts[act[0]][0] < max and act[2] == 0) or\
+                (rowCounts[act[0]][1] < max and act[2] == 1):
                     
-                if (colCounts[act[1]][0] < board.n/2 and act[2] == 0) or\
-                (colCounts[act[1]][1] < board.n/2 and act[2] == 1):
+                if (colCounts[act[1]][0] < max and act[2] == 0) or\
+                (colCounts[act[1]][1] < max and act[2] == 1):
                     newActions += [act]
-                
-                positions = []
+
+        #criação do vetor posições
+        positions = []
         for i in range(len(newActions)):
             positions.append((newActions[i][0], newActions[i][1]))
 
         #se houver posições que só têm uma opção, ele escolhe esse caminho
         for i in range(len(positions)):
             if (positions.count(positions[i]) == 1):
+  
                 return [newActions[i]]
-            
+
+
         #caso só houver posições com duas opções, ele escolhe a 1a
         return newActions[0:2]
 
@@ -259,9 +255,7 @@ class Takuzu(Problem):
     # TODO: outros metodos da classe
 
 
-# Antonio acrescentei mais dados de teste
 if __name__ == "__main__":
-    # TODO:
     # Ler o ficheiro de input de sys.argv[1],
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
@@ -271,19 +265,6 @@ if __name__ == "__main__":
     # puzzle = Takuzu(board)
     # initial = TakuzuState(board)
     # new = puzzle.result(initial, (0, 0, 1))
-    """ pra testar o goal_test (no teste 1)
-    newState = puzzle.result(initial, (0,0,0))
-    newState = puzzle.result(initial, (0,1,1))
-    newState = puzzle.result(initial, (1,2,0))
-    newState = puzzle.result(initial, (2,1,1))
-    newState = puzzle.result(initial, (3,1,0))
-    newState = puzzle.result(initial, (3,2,1))
-    newState = puzzle.result(initial, (3,3,0))
-
-    print(newState)
-
-    print(puzzle.goal_test(newState))
-    """
     
     # newState = puzzle.result(initial, (0, 1, 0))
     # puzzle.actions(newState)
@@ -293,8 +274,8 @@ if __name__ == "__main__":
     board = Board.parse_instance_from_stdin()
     # Criar uma instância de Takuzu:
     problem = Takuzu(board)
+
     # Obter o nó solução usando a procura em profundidade:
-    goal_node = breadth_first_tree_search(problem)
+    goal_node = depth_first_tree_search(problem)
     print("Is goal?", problem.goal_test(goal_node.state))
     print("Solution:\n", goal_node.state.board, sep="")
-
