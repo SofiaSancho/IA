@@ -195,7 +195,17 @@ class Takuzu(Problem):
                 (colCounts[act[1]][1] < board.n/2 and act[2] == 1):
                     newActions += [act]
                 
-        return newActions
+                positions = []
+        for i in range(len(newActions)):
+            positions.append((newActions[i][0], newActions[i][1]))
+
+        #se houver posições que só têm uma opção, ele escolhe esse caminho
+        for i in range(len(positions)):
+            if (positions.count(positions[i]) == 1):
+                return [newActions[i]]
+            
+        #caso só houver posições com duas opções, ele escolhe a 1a
+        return newActions[0:2]
 
     def result(self, state: TakuzuState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -212,24 +222,32 @@ class Takuzu(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
 
-        board = state.board
-
         line = []
+        conjunto = []
         n = state.board.n
-        #muda aqui o nheco, tava sem ideias, haha ok
         for fila in ("linha", "coluna"):
             for i in range(n):
                 for j in range(n):
                     pos = state.board.get_number(i, j) if fila == "linha" else state.board.get_number(j,i)
                     line.append(pos)
-                    if (pos == 2):
+                    if (pos == 2): 
+                        #se encontrar uma posição vazia, retorna Falso
                         return False
-                if (n % 2 == 0 and line.count(1) != line.count(0)):
+                if n % 2 == 0 and line.count(1) != line.count(0) and line.count(1) + line.count(0) != n:
+                    #sendo n par, retorna Falso se o nr de 0's for diferente ao nr de 1's
                     return False
-                if (n % 2 == 1 and (line.count(1) != line.count(0) + 1 or line.count(1) != line.count(0) - 1)):
+                #if (n % 2 == 1 and (line.count(1) != line.count(0) + 1 or line.count(1) != line.count(0) - 1)):
+                if n % 2 == 1 and abs(line.count(1) - line.count(0)) != 1 and line.count(1) + line.count(0) != n:
+                    #sendo n impar, retorna Falso se o nr de 0's e o nr de 1's tiver uma diferença diferente de 1
                     return False
+                conjunto.append(line.copy())
                 line = []
+            #verifica se há linhas/colunas iguais
+            for i in range (len(conjunto)):
+                if conjunto.count(conjunto[i]) > 1:
+                    return False
 
+            conjunto = []
         return True
 
 
