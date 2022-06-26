@@ -47,22 +47,8 @@ class Board:
         for i in self.board:
             for j in i:
                 s += str(j) + '\t'
-            s = s[:len(s)-1] + '\n'
+            s = s[:len(s)] + '\n'
         return s[:len(s)]
-    
-        # s = ''
-        # for i in self.board:
-        #     for j in i:
-        #         if j == 1:
-        #             s += '\u25FC'
-        #         elif j == 0:
-        #             s += '\u25B2'
-        #         else:
-        #             s += '.'
-        #         # s += str(j) if j == 2
-        #         s += '\t'
-        #     s = s[:len(s) - 1] + '\n'
-        # return s[:len(s)]
     
     def copy_board(self):
         newBoard = []
@@ -103,11 +89,11 @@ class Board:
             > from sys import stdin
             > stdin.readline()
         """
-        # Leitura do input. n -> tamanho do tabuleiro. board_lst -> lista com os valores de cada posição do tabuleiro
-        # retorna uma instância do Board com os atributos que leu do input
+        #Leitura do input. n -> tamanho do tabuleiro. board_lst -> lista com os valores de cada posição do tabuleiro
+        #retorna uma instância do Board com os atributos que leu do input
         
         # Antonio. ignora estes comentarios. E so para eu conseguir testar no IDE
-        # f = open ('testes-takuzu/input_T01', 'r')
+        # f = open ('testes-takuzu/input_T03', 'r')
         # n = int((f.readline()).rstrip('\n'))
         # board_lst = [[] for x in range(n)]
 
@@ -170,9 +156,9 @@ class Takuzu(Problem):
                                     isgood = 'No'
                                 elif board.adjacent_horizontal_numbers(i, j + 1)[1] == value:
                                     isgood = 'No'
-                             
-                            if isgood == 'Maybe':
-                                isgood = 'Yes'
+                                else:
+                                    isgood = 'Yes'
+                                    
                             # verticais 
                             if isgood != 'No' and board.adjacent_vertical_numbers(i, j)[0] == value:
                                 
@@ -191,7 +177,7 @@ class Takuzu(Problem):
                             
                             if isgood != 'No':
                                 actions += [(i, j , value)]
-        
+
         max = board.n//2 + board.n%2      
         newActions = []
         for act in actions:
@@ -203,7 +189,6 @@ class Takuzu(Problem):
                     newActions += [act]
 
         #criação do vetor posições
-
         positions = []
         for i in range(len(newActions)):
             positions.append((newActions[i][0], newActions[i][1]))
@@ -211,6 +196,7 @@ class Takuzu(Problem):
         #se houver posições que só têm uma opção, ele escolhe esse caminho
         for i in range(len(positions)):
             if (positions.count(positions[i]) == 1):
+  
                 return [newActions[i]]
 
 
@@ -269,7 +255,7 @@ class Takuzu(Problem):
     # TODO: outros metodos da classe
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # Ler o ficheiro de input de sys.argv[1],
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
@@ -285,11 +271,11 @@ class Takuzu(Problem):
     
     # Ler tabuleiro do ficheiro 'i1.txt' (Figura 1):
     # $ python3 takuzu < i1.txt
-    # board = Board.parse_instance_from_stdin()
+    board = Board.parse_instance_from_stdin()
     # Criar uma instância de Takuzu:
-    # problem = Takuzu(board)
+    problem = Takuzu(board)
 
-    # # Obter o nó solução usando a procura em profundidade:
-    # goal_node = breadth_first_tree_search(problem)
-    # print("Is goal?", problem.goal_test(goal_node.state))
-    # print("Solution:\n", goal_node.state.board, sep="")
+    # Obter o nó solução usando a procura em profundidade:
+    goal_node = depth_first_tree_search(problem)
+    print("Is goal?", problem.goal_test(goal_node.state))
+    print("Solution:\n", goal_node.state.board, sep="")
