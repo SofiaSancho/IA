@@ -116,7 +116,7 @@ class Board:
         # retorna uma instância do Board com os atributos que leu do input
         
         # Antonio. ignora estes comentarios. E so para eu conseguir testar no IDE
-        # f = open ('testes-takuzu/input_T03', 'r')
+        # f = open ('testes-takuzu/input_T05', 'r')
         # n = int((f.readline()).rstrip('\n'))
         # board_lst = [[] for x in range(n)]
 
@@ -146,9 +146,12 @@ class Takuzu(Problem):
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-        # start = datetime.now()
+        
         board = state.board
         actions = []
+        
+        pos = []
+        
         #contagem de 1's e 0's por linha e coluna
         rowCounts = [[0, 0] for x in range(board.n)]
         colCounts = [[0, 0] for x in range(board.n)]
@@ -164,6 +167,7 @@ class Takuzu(Problem):
                         if value not in board.adjacent_horizontal_numbers(i, j)\
                             and value not in board.adjacent_vertical_numbers(i, j):
                             actions += [(i, j , value)]
+                            pos += [(i,j)]
                         else:
                             # horizontais
                             isgood = 'Yes'
@@ -200,14 +204,22 @@ class Takuzu(Problem):
                             
                             if isgood != 'No':
                                 actions += [(i, j , value)]
-                                
+                                pos += [(i,j)]
+        
+        
+            for x in range(len(pos)):
+                if (pos.count(pos[x]) == 1):
+                    return [actions[x]]
+        
         max = board.n//2 + board.n%2      
         newActions = []
         once = True
         for act in actions:
-            if (act[2] == 0 and rowCounts[act[0]][0] < max and colCounts[act[1]][0] < max) or\
-                (act[2] == 1 and rowCounts[act[0]][1] < max and colCounts[act[1]][1] < max):
+            if (rowCounts[act[0]][0] < max and act[2] == 0) or\
+                (rowCounts[act[0]][1] < max and act[2] == 1):
                     
+                if (colCounts[act[1]][0] < max and act[2] == 0) or\
+                (colCounts[act[1]][1] < max and act[2] == 1):
                     if newActions == []:
                         newActions += [act]
                     elif (newActions[-1][0] == act[0]) & (newActions[-1][1] == act[1]):
@@ -221,19 +233,16 @@ class Takuzu(Problem):
 
         # #criação do vetor posições
 
-        # positions = []
-        # for i in range(len(newActions)):
-        #     positions.append((newActions[i][0], newActions[i][1]))
+        positions = []
+        for i in range(len(newActions)):
+            positions.append((newActions[i][0], newActions[i][1]))
 
-        # #se houver posições que só têm uma opção, ele escolhe esse caminho
-        # for i in range(len(positions)):
-        #     if (positions.count(positions[i]) == 1):
-        #         return [newActions[i]]
+        #se houver posições que só têm uma opção, ele escolhe esse caminho
+        for i in range(len(positions)):
+            if (positions.count(positions[i]) == 1):
+                return [newActions[i]]
         
         #caso só houver posições com duas opções, ele escolhe a 1a
-        # time = (datetime.now() - start).microseconds
-        
-        # print("Actions 2 took " + str(time) + " microseconds")
         return newActions[0:2]
 
     def result(self, state: TakuzuState, action):
@@ -250,6 +259,7 @@ class Takuzu(Problem):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
+
         line = []
         col = []
         conjunto_line = []
@@ -264,25 +274,25 @@ class Takuzu(Problem):
                 col.append(pos_col)
 
                 if (pos_line == 2 or pos_col == 2): 
-                    #se encontrar uma posição vazia, retorna Falso
                     return False
-            if n % 2:
-                if line.count(1) != line.count(0) or line.count(1) + line.count(0) != n
+					
+            if n % 2 == 0:
+                if line.count(1) != line.count(0) or line.count(1) + line.count(0) != n:
                     return False
                 if col.count(1) != col.count(0) or col.count(1) + col.count(0) != n:
                     return False
-                
+				
             if n % 2 == 1:
-                if (abs(line.count(1) - line.count(0)) != 1 or line.count(1) + line.count(0) != n):
+                if abs(line.count(1) - line.count(0)) != 1 or line.count(1) + line.count(0) != n:
                     return False
                 if abs(col.count(1) - col.count(0)) != 1 or col.count(1) + col.count(0) != n:
                     return False
-
+				
             conjunto_line.append(line.copy())
             conjunto_col.append(col.copy())
             line = []
             col = []
-        #verifica se há linhas/colunas iguais
+
         for i in range (len(conjunto_line)):
             if conjunto_line.count(conjunto_line[i]) > 1 or conjunto_col.count(conjunto_col[i]) > 1:
                 return False
@@ -302,23 +312,28 @@ class Takuzu(Problem):
 
     # TODO: outros metodos da classe
 
-from datetime import datetime
+
 if __name__ == "__main__":
     # Ler o ficheiro de input de sys.argv[1],
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-    # time = []
-    # n = 1000
-    # for i in range(n):
-        # start = datetime.now()
-        board = Board.parse_instance_from_stdin()
-        
-        # Criar uma instância de Takuzu:
-        problem = Takuzu(board)
-        # Obter o nó solução usando a procura em profundidade:
-        goal_node = greedy_search(problem)
-        # print(goal_node.state.board, sep="")
-        # time += [(datetime.now() - start).microseconds]
-        
-    # print("Average of A*, iterations " + str(n) + "\nValue is --> " + str(sum(time)/n))
+
+    board = Board.parse_instance_from_stdin()
+    # puzzle = Takuzu(board)
+    # initial = TakuzuState(board)
+    # new = puzzle.result(initial, (0, 0, 1))
+    
+    # newState = puzzle.result(initial, (0, 1, 0))
+    # puzzle.actions(newState)
+    
+    # Ler tabuleiro do ficheiro 'i1.txt' (Figura 1):
+    # $ python3 takuzu < i1.txt
+    # board = Board.parse_instance_from_stdin()
+    # Criar uma instância de Takuzu:
+    problem = Takuzu(board)
+
+    # # Obter o nó solução usando a procura em profundidade:
+    goal_node = depth_first_tree_search(problem)
+    # print("Is goal?", problem.goal_test(goal_node.state))
+    print(goal_node.state.board, sep="")
