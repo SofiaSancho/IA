@@ -48,7 +48,7 @@ class Board:
             for j in i:
                 s += str(j) + '\t'
             s = s[:len(s)-1] + '\n'
-        return s[:len(s)-1]
+        return s[:len(s)]
     
         # s = ''
         # for i in self.board:
@@ -107,7 +107,7 @@ class Board:
         # retorna uma instância do Board com os atributos que leu do input
         
         # Antonio. ignora estes comentarios. E so para eu conseguir testar no IDE
-        # f = open ('testes-takuzu/input_T03', 'r')
+        # f = open ('testes-takuzu/input_T01', 'r')
         # n = int((f.readline()).rstrip('\n'))
         # board_lst = [[] for x in range(n)]
 
@@ -194,35 +194,24 @@ class Takuzu(Problem):
         
         max = board.n//2 + board.n%2      
         newActions = []
-        once = False
         for act in actions:
             if (rowCounts[act[0]][0] < max and act[2] == 0) or\
                 (rowCounts[act[0]][1] < max and act[2] == 1):
                     
                 if (colCounts[act[1]][0] < max and act[2] == 0) or\
                 (colCounts[act[1]][1] < max and act[2] == 1):
-                    
-                    if newActions == []:
-                        newActions += [act]
-                    elif (newActions[-1][0] == act[0]) & (newActions[-1][1] == act[1]):
-                        once = False
-                        newActions += [act]
-                    elif once:
-                        return [newActions[-1]]
-                    else:
-                        once = True
-                        newActions += [act]
+                    newActions += [act]
 
-        # #criação do vetor posições
+        #criação do vetor posições
 
-        # positions = []
-        # for i in range(len(newActions)):
-        #     positions.append((newActions[i][0], newActions[i][1]))
+        positions = []
+        for i in range(len(newActions)):
+            positions.append((newActions[i][0], newActions[i][1]))
 
-        # #se houver posições que só têm uma opção, ele escolhe esse caminho
-        # for i in range(len(positions)):
-        #     if (positions.count(positions[i]) == 1):
-        #         return [newActions[i]]
+        #se houver posições que só têm uma opção, ele escolhe esse caminho
+        for i in range(len(positions)):
+            if (positions.count(positions[i]) == 1):
+                return [newActions[i]]
 
 
         #caso só houver posições com duas opções, ele escolhe a 1a
