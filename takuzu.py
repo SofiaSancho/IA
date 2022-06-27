@@ -272,8 +272,13 @@ class Takuzu(Problem):
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
-        # TODO
-        pass
+        res = 0
+        n = node.state.board.n
+        for i in range(n):
+            for j in range(n):
+                if node.state.board.get_number(i, j) == 2:
+                   res += 1
+        return res
 
     # TODO: outros metodos da classe
 
