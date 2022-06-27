@@ -29,7 +29,16 @@ class TakuzuState:
         return 'ID: ' + str(self.id) + '\n' +  str(self.board)
 
     def __lt__(self, other):
-        return self.id < other.id
+        res1 = 0
+        res2 = 0
+        n = self.board.n
+        for i in range(n):
+            for j in range(n):
+                if self.board.get_number(i, j) == 2:
+                   res1 += 1
+                if other.board.get_number(i, j) == 2:
+                   res2 += 1
+        return res1 < res2 
 
     # TODO: outros metodos da classe
 
@@ -107,7 +116,7 @@ class Board:
         # retorna uma instância do Board com os atributos que leu do input
         
         # Antonio. ignora estes comentarios. E so para eu conseguir testar no IDE
-        # f = open ('testes-takuzu/input_T12', 'r')
+        # f = open ('testes-takuzu/input_T05', 'r')
         # n = int((f.readline()).rstrip('\n'))
         # board_lst = [[] for x in range(n)]
 
