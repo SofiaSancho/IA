@@ -266,14 +266,18 @@ class Takuzu(Problem):
                 if (pos_line == 2 or pos_col == 2): 
                     #se encontrar uma posição vazia, retorna Falso
                     return False
-            if n % 2 and ((line.count(1) != line.count(0) and line.count(1) + line.count(0) != n) or\
-                (col.count(1) != col.count(0) and col.count(1) + col.count(0) != n)):
-                #sendo n par, retorna Falso se o nr de 0's for diferente ao nr de 1's
-                return False
-            if n % 2 == 1 and ((abs(line.count(1) - line.count(0)) != 1 and line.count(1) + line.count(0) != n) or\
-                (abs(col.count(1) - col.count(0)) != 1 and col.count(1) + col.count(0) != n)):
-                #sendo n impar, retorna Falso se o nr de 0's e o nr de 1's tiver uma diferença diferente de 1
-                return False
+            if n % 2:
+                if line.count(1) != line.count(0) or line.count(1) + line.count(0) != n
+                    return False
+                if col.count(1) != col.count(0) or col.count(1) + col.count(0) != n:
+                    return False
+                
+            if n % 2 == 1:
+                if (abs(line.count(1) - line.count(0)) != 1 or line.count(1) + line.count(0) != n):
+                    return False
+                if abs(col.count(1) - col.count(0)) != 1 or col.count(1) + col.count(0) != n:
+                    return False
+
             conjunto_line.append(line.copy())
             conjunto_col.append(col.copy())
             line = []
