@@ -251,31 +251,38 @@ class Takuzu(Problem):
         estão preenchidas com uma sequência de números adjacentes."""
 
         line = []
-        conjunto = []
+        col = []
+        conjunto_line = []
+        conjunto_col = []
         n = state.board.n
-        for fila in ("linha", "coluna"):
-            for i in range(n):
-                for j in range(n):
-                    pos = state.board.get_number(i, j) if fila == "linha" else state.board.get_number(j,i)
-                    line.append(pos)
-                    if (pos == 2): 
-                        #se encontrar uma posição vazia, retorna Falso
-                        return False
-                if n % 2 == 0 and line.count(1) != line.count(0) and line.count(1) + line.count(0) != n:
-                    #sendo n par, retorna Falso se o nr de 0's for diferente ao nr de 1's
-                    return False
-                #if (n % 2 == 1 and (line.count(1) != line.count(0) + 1 or line.count(1) != line.count(0) - 1)):
-                if n % 2 == 1 and abs(line.count(1) - line.count(0)) != 1 and line.count(1) + line.count(0) != n:
-                    #sendo n impar, retorna Falso se o nr de 0's e o nr de 1's tiver uma diferença diferente de 1
-                    return False
-                conjunto.append(line.copy())
-                line = []
-            #verifica se há linhas/colunas iguais
-            for i in range (len(conjunto)):
-                if conjunto.count(conjunto[i]) > 1:
-                    return False
 
-            conjunto = []
+        for i in range(n):
+            for j in range(n):
+                pos_line = state.board.get_number(i, j)
+                pos_col = state.board.get_number(j, i)
+                line.append(pos_line)
+                col.append(pos_col)
+
+                if (pos_line == 2 or pos_col == 2): 
+                    #se encontrar uma posição vazia, retorna Falso
+                    return False
+            if n % 2 and ((line.count(1) != line.count(0) and line.count(1) + line.count(0) != n) or\
+                (col.count(1) != col.count(0) and col.count(1) + col.count(0) != n)):
+                #sendo n par, retorna Falso se o nr de 0's for diferente ao nr de 1's
+                return False
+            if n % 2 == 1 and ((abs(line.count(1) - line.count(0)) != 1 and line.count(1) + line.count(0) != n) or\
+                (abs(col.count(1) - col.count(0)) != 1 and col.count(1) + col.count(0) != n)):
+                #sendo n impar, retorna Falso se o nr de 0's e o nr de 1's tiver uma diferença diferente de 1
+                return False
+            conjunto_line.append(line.copy())
+            conjunto_col.append(col.copy())
+            line = []
+            col = []
+        #verifica se há linhas/colunas iguais
+        for i in range (len(conjunto_line)):
+            if conjunto_line.count(conjunto_line[i]) > 1 or conjunto_col.count(conjunto_col[i]) > 1:
+                return False
+
         return True
 
 
