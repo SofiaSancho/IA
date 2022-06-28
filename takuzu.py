@@ -1,7 +1,3 @@
-# takuzu.py: Template para implementação do projeto de Inteligência Artificial 2021/2022.
-# Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
-# Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
-
 # Grupo 32:
 # 95735 António Marçal
 # 99122 Sofia Sancho
@@ -40,8 +36,6 @@ class TakuzuState:
                    res2 += 1
         return res1 < res2 
 
-    # TODO: outros metodos da classe
-
 
 class Board:
     """Representação interna de um tabuleiro de Takuzu."""
@@ -58,20 +52,6 @@ class Board:
                 s += str(j) + '\t'
             s = s[:len(s)-1] + '\n'
         return s[:len(s)-1]
-    
-        # s = ''
-        # for i in self.board:
-        #     for j in i:
-        #         if j == 1:
-        #             s += '\u25FC'
-        #         elif j == 0:
-        #             s += '\u25B2'
-        #         else:
-        #             s += '.'
-        #         # s += str(j) if j == 2
-        #         s += '\t'
-        #     s = s[:len(s) - 1] + '\n'
-        # return s[:len(s)]
     
     def copy_board(self):
         newBoard = []
@@ -112,19 +92,6 @@ class Board:
             > from sys import stdin
             > stdin.readline()
         """
-        # Leitura do input. n -> tamanho do tabuleiro. board_lst -> lista com os valores de cada posição do tabuleiro
-        # retorna uma instância do Board com os atributos que leu do input
-        
-        # Antonio. ignora estes comentarios. E so para eu conseguir testar no IDE
-        # f = open ('testes-takuzu/input_T05', 'r')
-        # n = int((f.readline()).rstrip('\n'))
-        # board_lst = [[] for x in range(n)]
-
-        # for i in range(n):
-        #     board_lst[i] = [int(j) for j in f.readline() if j != '\n' and j != '\t']
-            
-        # f.close()
-        # return Board(n, board_lst)
                 
         n = int((sys.stdin.readline()).rstrip('\n'))
         board_lst = [[] for x in range(n)]
@@ -133,8 +100,6 @@ class Board:
             board_lst[i] = [int(j) for j in sys.stdin.readline() if j != '\n' and j != '\t']
 
         return Board(n, board_lst)
-
-    # TODO: outros metodos da classe
 
 
 class Takuzu(Problem):
@@ -230,17 +195,6 @@ class Takuzu(Problem):
                     else:
                         once = True
                         newActions += [act] 
-
-        # #criação do vetor posições
-
-        positions = []
-        for i in range(len(newActions)):
-            positions.append((newActions[i][0], newActions[i][1]))
-
-        #se houver posições que só têm uma opção, ele escolhe esse caminho
-        for i in range(len(positions)):
-            if (positions.count(positions[i]) == 1):
-                return [newActions[i]]
         
         #caso só houver posições com duas opções, ele escolhe a 1a
         return newActions[0:2]
@@ -310,30 +264,15 @@ class Takuzu(Problem):
                    res += 1
         return res
 
-    # TODO: outros metodos da classe
-
 
 if __name__ == "__main__":
-    # Ler o ficheiro de input de sys.argv[1],
-    # Usar uma técnica de procura para resolver a instância,
-    # Retirar a solução a partir do nó resultante,
-    # Imprimir para o standard output no formato indicado.
-
+    
+    # Lê o tabuleiro do stdin
     board = Board.parse_instance_from_stdin()
-    # puzzle = Takuzu(board)
-    # initial = TakuzuState(board)
-    # new = puzzle.result(initial, (0, 0, 1))
     
-    # newState = puzzle.result(initial, (0, 1, 0))
-    # puzzle.actions(newState)
-    
-    # Ler tabuleiro do ficheiro 'i1.txt' (Figura 1):
-    # $ python3 takuzu < i1.txt
-    # board = Board.parse_instance_from_stdin()
     # Criar uma instância de Takuzu:
     problem = Takuzu(board)
 
     # # Obter o nó solução usando a procura em profundidade:
     goal_node = depth_first_tree_search(problem)
-    # print("Is goal?", problem.goal_test(goal_node.state))
     print(goal_node.state.board, sep="")
